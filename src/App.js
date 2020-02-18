@@ -1,13 +1,46 @@
 import React from 'react';
 import './App.css';
+import productTile from './component/prductTile';
+
+import pic1 from './images/pic1.jpeg'
+import pic2 from './images/pic2.jpeg'
+import pic3 from './images/pic3.jpeg'
+import pic4 from './images/pic4.jpeg'
+import pic5 from './images/pic5.jpeg'
+import pic6 from './images/pic6.jpg'
+
 
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             firstState: 'Helloworld',
-            checkoutClicked: false,
-            cartClicked: false,
+            cartitem: [
+                {
+                    num: 'id1',
+                    Item: 'Phone',
+                    carted: false,
+                    pic: pic1
+                },
+                {
+                    num: 'id2',
+                    Item: 'Shoe',
+                    carted: false,
+                    pic: pic2
+                },
+                {
+                    num: 'id3',
+                    Item: 'Phone',
+                    carted: false,
+                    pic: pic3
+                },
+                {
+                    num: 'id4',
+                    Item: 'Phone',
+                    carted: false,
+                    pic: pic4
+                }
+            ],
             cartCount: 0
         }
     }
@@ -25,7 +58,6 @@ class App extends React.Component {
                 <div className='container clearfix'>
                     <nav className="navbar navbar-expand-lg navbar-light bg-light" style={{ "marginTop": "10px" }}>
                         <a className="navbar-brand">
-                            {this.state.firstState}
                             <img src="./images/logo.jfif" width="60" height="60" />
                         </a>
                         <div className="collapse navbar-collapse" id="navbarSupportedContent">
@@ -34,75 +66,42 @@ class App extends React.Component {
                             </ul>
                             <form className="form-inline my-2 my-lg-0">
                                 {/* <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"> */}
-        <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Cart {}</button>
+                                <button className="btn btn-outline-success my-2 my-sm-0" type="submit">{"Cart (" + this.state.cartCount + ")"}</button>
                             </form>
                         </div>
                     </nav>
                     <h3 style={{ "marginTop": "10px" }}>Products</h3>
                     <div className="row">
-                        <div className="col-3">
-                            <div className="card" style={{ "width": "15rem", "margin": "10px" }}>
-                                <div className="card-body">
-                                    <div className="row">
-                                        <img src="./images/pic1.jpeg" height="80" width="80" />
-                                        <h5 className="card-title" style={{ "marginLeft": "10px" }}>Phones</h5>
-                                    </div>
-                                    <div className="text-center" style={{ "marginTop": "20px" }}>
-                                        <button className="btn btn-outline-success my-2 my-sm-0 add-button" type="submit" onClick={this.cartClicked}>{this.state.cartClicked ? "Remove" : "Add to cart"}</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-3">
-                            <div className="card" style={{ "width": "15rem", "margin": "10px" }}>
-                                <div className="card-body">
-                                    <div className="row">
-                                        <img src="./images/pic2.jpeg" alt="Smiley face" height="80" width="80" />
-                                        <h5 className="card-title" style={{ "marginLeft": "10px" }}>Shoes</h5>
-                                    </div>
-                                    <div className="text-center" style={{ "marginTop": "20px" }}>
-                                        <button className="btn btn-outline-success my-2 my-sm-0 add-button" type="submit" onClick={this.cartClicked}>{this.state.cartClicked ? "Remove" : "Add to cart"}</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-3">
-                            <div className="card" style={{ "width": "15rem", "margin": "10px" }}>
-                                <div className="card-body">
-                                    <div className="row">
-                                        <img src="./images/pic3.jpeg" alt="Smiley face" height="80" width="80" />
-                                        <h5 className="card-title" style={{ "marginLeft": "10px" }}>Watches</h5>
-                                    </div>
-                                    <div className="text-center" style={{ "marginTop": "20px" }}>
-                                        <button className="btn btn-outline-success my-2 my-sm-0 add-button" type="submit" onClick={this.cartClicked}>{this.state.cartClicked ? "Remove" : "Add to cart"}</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        {productTile(this.state.cartitem[0], this.cartClicked)}
+                        {productTile(this.state.cartitem[1], this.cartClicked)}
+                        {productTile(this.state.cartitem[2], this.cartClicked)}
+                        {productTile(this.state.cartitem[3], this.cartClicked)}
                     </div>
-                </div>
-                <div className="container clearfix">
-                    <button class="btn btn-outline-success my-2 my-sm-0 float-right" type="submit" onClick={this.checkoutPressed}>{this.state.checkoutClicked ? "Clicked" : "Click Me"}
-                    </button>
-                </div>
-            </div >
+                    <div className="container clearfix">
+                        <button className="btn btn-outline-success my-2 my-sm-0 float-right" type="submit" onClick={this.checkoutPressed}>{this.state.checkoutPressed ? "Cancel" : "Checkout" }
+                        </button>
+                        {
+                            // this.state.cartitem.map((element, index) => {
+                            //     return (
+                            //         <h3>{element.num}</h3>
+                            //     );
+                            // })
+                        }
+                    </div>
+                </div >
+            </div>
         );
     }
-    cartCount = () => {
-        this.state.cartClicked=this.state.cartClicked+1
-    }
 
-    cartClicked = () => {
-        if (this.state.cartClicked == false) {
-            this.setState({
-                cartClicked: true,
-            });
-        }
-        else {
-            this.setState({
-                cartClicked: false,
-            });
-        }
+    cartClicked = (status) => {
+        let newCount = this.state.cartCount;
+        if (status)
+            newCount++;
+        else
+            newCount--;
+        this.setState({
+            cartCount: newCount
+        });
     }
 
     checkoutPressed = () => {
