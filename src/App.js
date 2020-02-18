@@ -14,44 +14,60 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            firstState: 'Helloworld',
-            cartitem: [
-                {
-                    num: 'id1',
-                    Item: 'Phone',
-                    carted: false,
-                    pic: pic1
-                },
-                {
-                    num: 'id2',
-                    Item: 'Shoe',
-                    carted: false,
-                    pic: pic2
-                },
-                {
-                    num: 'id3',
-                    Item: 'Phone',
-                    carted: false,
-                    pic: pic3
-                },
-                {
-                    num: 'id4',
-                    Item: 'Phone',
-                    carted: false,
-                    pic: pic4
-                }
-            ],
-            cartCount: 0
+            products: [],
+            cartCount: 0,
+            cart: []
         }
     }
+
     componentDidMount() {
         this.setState({
             firstState: "Welcome to shop"
         })
+        this.loadProducts()
     }
+
+    addToCart = (product) => {
+        let tmpCart = this.state.cart;
+
+        let found = false;
+        tmpCart.some((element) => {
+            if (element.id === product.id) {
+                found = true;
+                return true;
+            }
+        })
+        if (!found) {
+            tmpCart.push(product);
+            this.setState({
+                cart: tmpCart
+            });
+        }
+    }
+
+    loadProducts() {
+        fetch('http://my-json-server.typicode.com/shiyasvp92/sample_products/products', {
+            method: 'GET'
+        })
+            .then((response) => {
+                return response.json()
+            })
+            .then((data) => {
+                console.log(data)
+                this.setState({
+                    products: data
+                })
+            })
+            .catch((error) => {
+                console.error(error)
+            })
+
+    }
+
     componentDidUpdate(prevProps, prevState) {
         console.log(this.state)
     }
+
     render() {
         return (
             <div>
@@ -66,43 +82,39 @@ class App extends React.Component {
                             </ul>
                             <form className="form-inline my-2 my-lg-0">
                                 {/* <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"> */}
-                                <button className="btn btn-outline-success my-2 my-sm-0" type="submit">{"Cart (" + this.state.cartCount + ")"}</button>
+                                <button className="btn btn-outline-success my-2 my-sm-0" type="submit">{"Cart (" + this.state.cart.length + ")"}</button>
                             </form>
                         </div>
                     </nav>
                     <h3 style={{ "marginTop": "10px" }}>Products</h3>
                     <div className="row">
-                        {productTile(this.state.cartitem[0], this.cartClicked)}
-                        {productTile(this.state.cartitem[1], this.cartClicked)}
-                        {productTile(this.state.cartitem[2], this.cartClicked)}
-                        {productTile(this.state.cartitem[3], this.cartClicked)}
+                        {
+                            this.state.products.map((element) => {
+                                return (
+                                    productTile(element, this.addToCart)
+                                )
+                            })
+                        }
                     </div>
                     <div className="container clearfix">
-                        <button className="btn btn-outline-success my-2 my-sm-0 float-right" type="submit" onClick={this.checkoutPressed}>{this.state.checkoutPressed ? "Cancel" : "Checkout" }
+                        <button className="btn btn-outline-success my-2 my-sm-0 float-right" type="submit" onClick={this.checkoutPressed}>{this.state.checkoutPressed ? "Cancel" : "Checkout"}
                         </button>
-                        {
-                            // this.state.cartitem.map((element, index) => {
-                            //     return (
-                            //         <h3>{element.num}</h3>
-                            //     );
-                            // })
-                        }
                     </div>
                 </div >
             </div>
         );
     }
 
-    cartClicked = (status) => {
-        let newCount = this.state.cartCount;
-        if (status)
-            newCount++;
-        else
-            newCount--;
-        this.setState({
-            cartCount: newCount
-        });
-    }
+    // cartClicked = (status) => {
+    //     let newCount = this.state.cartCount;
+    //     if (status)
+    //         newCount++;
+    //     else
+    //         newCount--;
+    //     this.setState({
+    //         cartCount: newCount
+    //     });
+    // }
 
     checkoutPressed = () => {
         this.setState({
